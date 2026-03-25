@@ -6,16 +6,23 @@
     <title>Font Picker</title>
     <link rel="apple-touch-icon" href="image_23.png">
     <link rel="icon" type="image/png" href="image_23.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;800&family=Playfair+Display:ital,wght@0,700;1,700&family=Source+Code+Pro:wght@400;700&family=Bebas+Neue&family=Lora:wght@400;700&family=Montserrat:wght@400;900&family=Abril+Fatface&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;800&family=Playfair+Display:ital,wght@0,700;1,700&family=Source+Code+Pro:wght@400;700&family=Bebas+Neue&family=Lora:wght@400;700&family=Montserrat:wght@400;900&family=Abril+Fatface&family=Sawarabi+Mincho&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #fff;
-            --main: #333;
+            --main: #333; /* #333固定 */
             --accent: #eee;
             --radius: 15px;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            margin: 0; padding: 0;
+            /* ダブルタップズームを阻止 */
+            touch-action: manipulation; 
+        }
+
         body {
             background-color: var(--bg); color: var(--main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -23,11 +30,11 @@
             padding: calc(env(safe-area-inset-top, 20px) + 15px) 15px calc(env(safe-area-inset-bottom, 10px) + 15px) 15px;
         }
 
-        .fridge-container { width: 100%; max-width: 420px; display: flex; flex-direction: column; flex-grow: 1; }
+        .fridge-container { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; }
         
-        header { text-align: center; margin-bottom: 20px; }
-        h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; }
-        .subtitle { color: #999; font-size: 0.8rem; font-weight: 500; }
+        header { text-align: center; margin-bottom: 25px; }
+        h1 { font-size: 2rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 5px; }
+        .subtitle { color: #999; font-size: 0.85rem; font-weight: 500; }
 
         /* Font Display Area */
         .display-card {
@@ -35,43 +42,40 @@
             border: 1px solid var(--accent); border-radius: var(--radius);
             display: flex; align-items: center; justify-content: center;
             overflow: hidden; padding: 25px; margin-bottom: 15px;
-            position: relative; transition: background 0.2s;
+            position: relative;
         }
         #fontDisplay {
             width: 100%; text-align: center; word-break: break-word;
-            font-size: 2.2rem; line-height: 1.2; user-select: none;
+            font-size: 2.2rem; line-height: 1.2;
         }
 
-        /* Font Info Tag */
         .info-tag {
-            position: absolute; bottom: 12px; font-size: 0.65rem; font-weight: 800;
-            background: rgba(255,255,255,0.8); color: #bbb; padding: 4px 10px;
+            position: absolute; bottom: 12px; font-size: 0.7rem; font-weight: 800;
+            background: #fff; color: #bbb; padding: 4px 12px;
             border-radius: 10px; text-transform: uppercase; cursor: pointer;
-            border: 1px solid #eee;
+            border: 1px solid var(--accent);
         }
 
         /* Controls */
-        .controls { display: flex; gap: 10px; margin-bottom: 20px; }
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; }
         .btn {
             flex: 1; background: var(--main); color: #fff; border: none;
             padding: 18px; border-radius: var(--radius); font-size: 1.2rem;
             font-weight: bold; cursor: pointer; transition: 0.1s;
-            display: flex; align-items: center; justify-content: center;
         }
-        .btn:active { transform: scale(0.96); opacity: 0.9; }
-        .btn-prev { background: #666; }
+        .btn-prev { background: #777; flex: 0.4; }
+        .btn:active { transform: scale(0.96); }
 
-        /* Input */
-        .input-wrap { width: 100%; margin-bottom: 20px; }
+        /* Input area */
+        .input-wrap { width: 100%; margin-bottom: 25px; }
         textarea {
             width: 100%; height: 80px; border-radius: var(--radius);
             border: 1px solid var(--accent); background: #fafafa;
-            padding: 15px; font-size: 1rem; font-family: inherit;
-            resize: none; outline: none; transition: border-color 0.2s;
+            padding: 15px; font-size: 1rem; color: var(--main);
+            resize: none; outline: none;
         }
-        textarea:focus { border-color: #bbb; }
 
-        /* Common Footer Parts */
+        /* Footer Components */
         .footer-btns { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: auto; padding: 20px 0; }
         .kofi-btn, .home-btn {
             display: inline-flex; align-items: center; padding: 12px 20px;
@@ -79,18 +83,25 @@
         }
         .kofi-btn { background: var(--main); color: #fff; }
         .home-btn { background: var(--accent); color: var(--main); border: none; cursor: pointer; }
-        footer { font-size: 0.7rem; color: #bbb; line-height: 1.6; text-align: center; }
 
+        footer { font-size: 0.7rem; color: #bbb; text-align: center; line-height: 1.6; }
+
+        /* Toast */
         #toast {
-            position: fixed; bottom: 80px; background: rgba(0,0,0,0.8); color: #fff;
-            padding: 8px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: bold;
-            opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 200;
+            position: fixed; bottom: 100px; background: rgba(0,0,0,0.8); color: #fff;
+            padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none;
         }
         
-        /* Modal */
+        /* Modal (固定仕様:憲法遵守) */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: #fff; padding: 30px; border-radius: 20px; max-width: 320px; width: 90%; position: relative; }
-        .close-icon { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: #aaa; cursor: pointer; }
+        .modal-content { 
+            background: #fff; padding: 30px; border-radius: 20px; 
+            max-width: 320px; width: 90%; position: relative; text-align: left;
+        }
+        .modal-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 1.2rem; font-weight: 800;}
+        .instruction-group { margin-bottom: 15px; font-size: 0.95rem; line-height: 1.5; color: #333; }
+        .close-icon { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: #aaa; cursor: pointer; padding: 5px; }
     </style>
 </head>
 <body>
@@ -107,16 +118,18 @@
     </div>
 
     <div class="controls">
-        <button class="btn btn-prev" id="prevBtn" aria-label="Previous">←</button>
+        <button class="btn btn-prev" id="prevBtn">←</button>
         <button class="btn" id="nextBtn">Pick Next Font →</button>
     </div>
 
     <div class="input-wrap">
-        <textarea id="textInput" placeholder="Enter your text here...">The quick brown fox</textarea>
+        <textarea id="textInput" placeholder="Type here to test...">The quick brown fox</textarea>
     </div>
 
     <div class="footer-btns">
-        <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">🍵 Support me on Ko-fi</a>
+        <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">
+            <span>🍵</span> Support me on Ko-fi
+        </a>
         <button class="home-btn" id="homeBtn">Add to Home Screen</button>
     </div>
 
@@ -131,11 +144,19 @@
 <div id="modal" class="modal">
     <div class="modal-content">
         <span class="close-icon" id="closeModal">&times;</span>
-        <p style="font-weight: bold; margin-bottom: 15px;">Install</p>
-        <p style="font-size: 0.9rem; line-height: 1.4; color: #666;">
-            Safari: Share > Add to Home Screen<br>
-            Chrome: Menu > Install App
-        </p>
+        <div class="modal-title-row">
+            <span>📱</span>
+            <strong>Install</strong>
+        </div>
+        <p style="margin-bottom: 20px; color: #666; font-size: 0.9rem;">Add to your home screen.</p>
+        <div class="instruction-group">
+            <p>🍏 <strong>iPhone (Safari):</strong></p>
+            <p>Tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>.</p>
+        </div>
+        <div class="instruction-group">
+            <p>🤖 <strong>Android (Chrome):</strong></p>
+            <p>Tap <strong>Menu (⋮)</strong>, then <strong>Add to home screen</strong>.</p>
+        </div>
     </div>
 </div>
 
@@ -151,8 +172,8 @@
         { name: 'System Serif', family: 'serif' },
         { name: 'System Sans', family: 'sans-serif' },
         { name: 'System Mono', family: 'monospace' },
-        { name: 'Mincho', family: '"Sawarabi Mincho", "MS Mincho", serif' },
-        { name: 'Gothic', family: '"Hiragino Sans", "Meiryo", sans-serif' }
+        { name: 'Sawarabi Mincho', family: '"Sawarabi Mincho", serif' },
+        { name: 'System Gothic', family: '"Hiragino Sans", "Meiryo", sans-serif' }
     ];
 
     let currentIndex = 0;
@@ -163,6 +184,7 @@
     const nextBtn = document.getElementById('nextBtn');
     const prevBtn = document.getElementById('prevBtn');
     const toast = document.getElementById('toast');
+    const modal = document.getElementById('modal');
 
     function updateFont(index) {
         currentIndex = (index + fontList.length) % fontList.length;
@@ -186,11 +208,12 @@
         });
     };
 
-    // Modal logic
-    document.getElementById('homeBtn').onclick = () => document.getElementById('modal').style.display = 'flex';
-    document.getElementById('closeModal').onclick = () => document.getElementById('modal').style.display = 'none';
+    // Modal Logic
+    document.getElementById('homeBtn').onclick = () => modal.style.display = 'flex';
+    document.getElementById('closeModal').onclick = () => modal.style.display = 'none';
+    window.onclick = (e) => { if (e.target == modal) modal.style.display = 'none'; };
 
-    // Initial load
+    // Init
     updateFont(0);
 </script>
 
