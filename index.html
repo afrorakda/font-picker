@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Font Picker</title>
+    <link rel="apple-touch-icon" href="image_23.png">
+    <link rel="icon" type="image/png" href="image_23.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;800&family=Playfair+Display:ital,wght@0,700;1,700&family=Source+Code+Pro:wght@400;700&family=Bebas+Neue&family=Lora:wght@400;700&family=Montserrat:wght@400;900&family=Abril+Fatface&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fff;
+            --main: #333;
+            --accent: #eee;
+            --radius: 15px;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg); color: var(--main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+            padding: calc(env(safe-area-inset-top, 20px) + 15px) 15px calc(env(safe-area-inset-bottom, 10px) + 15px) 15px;
+        }
+
+        .fridge-container { width: 100%; max-width: 420px; display: flex; flex-direction: column; flex-grow: 1; }
+        
+        header { text-align: center; margin-bottom: 20px; }
+        h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; }
+        .subtitle { color: #999; font-size: 0.8rem; font-weight: 500; }
+
+        /* Font Display Area */
+        .display-card {
+            width: 100%; aspect-ratio: 1 / 0.8; background: #fafafa;
+            border: 1px solid var(--accent); border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; padding: 25px; margin-bottom: 15px;
+            position: relative; transition: background 0.2s;
+        }
+        #fontDisplay {
+            width: 100%; text-align: center; word-break: break-word;
+            font-size: 2.2rem; line-height: 1.2; user-select: none;
+        }
+
+        /* Font Info Tag */
+        .info-tag {
+            position: absolute; bottom: 12px; font-size: 0.65rem; font-weight: 800;
+            background: rgba(255,255,255,0.8); color: #bbb; padding: 4px 10px;
+            border-radius: 10px; text-transform: uppercase; cursor: pointer;
+            border: 1px solid #eee;
+        }
+
+        /* Controls */
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; }
+        .btn {
+            flex: 1; background: var(--main); color: #fff; border: none;
+            padding: 18px; border-radius: var(--radius); font-size: 1.2rem;
+            font-weight: bold; cursor: pointer; transition: 0.1s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn:active { transform: scale(0.96); opacity: 0.9; }
+        .btn-prev { background: #666; }
+
+        /* Input */
+        .input-wrap { width: 100%; margin-bottom: 20px; }
+        textarea {
+            width: 100%; height: 80px; border-radius: var(--radius);
+            border: 1px solid var(--accent); background: #fafafa;
+            padding: 15px; font-size: 1rem; font-family: inherit;
+            resize: none; outline: none; transition: border-color 0.2s;
+        }
+        textarea:focus { border-color: #bbb; }
+
+        /* Common Footer Parts */
+        .footer-btns { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: auto; padding: 20px 0; }
+        .kofi-btn, .home-btn {
+            display: inline-flex; align-items: center; padding: 12px 20px;
+            border-radius: var(--radius); font-weight: bold; font-size: 0.85rem; text-decoration: none;
+        }
+        .kofi-btn { background: var(--main); color: #fff; }
+        .home-btn { background: var(--accent); color: var(--main); border: none; cursor: pointer; }
+        footer { font-size: 0.7rem; color: #bbb; line-height: 1.6; text-align: center; }
+
+        #toast {
+            position: fixed; bottom: 80px; background: rgba(0,0,0,0.8); color: #fff;
+            padding: 8px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: bold;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 200;
+        }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #fff; padding: 30px; border-radius: 20px; max-width: 320px; width: 90%; position: relative; }
+        .close-icon { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: #aaa; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="fridge-container">
+    <header>
+        <h1>Font Picker</h1>
+        <p class="subtitle">Quickly find the perfect style for your text.</p>
+    </header>
+
+    <div class="display-card">
+        <div id="fontDisplay">The quick brown fox</div>
+        <div class="info-tag" id="fontInfo">Inter</div>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-prev" id="prevBtn" aria-label="Previous">←</button>
+        <button class="btn" id="nextBtn">Pick Next Font →</button>
+    </div>
+
+    <div class="input-wrap">
+        <textarea id="textInput" placeholder="Enter your text here...">The quick brown fox</textarea>
+    </div>
+
+    <div class="footer-btns">
+        <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">🍵 Support me on Ko-fi</a>
+        <button class="home-btn" id="homeBtn">Add to Home Screen</button>
+    </div>
+
+    <footer>
+        No login / No tracking / No ads / Browser only<br>
+        afrorakda © 2026
+    </footer>
+</div>
+
+<div id="toast">Copied!</div>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close-icon" id="closeModal">&times;</span>
+        <p style="font-weight: bold; margin-bottom: 15px;">Install</p>
+        <p style="font-size: 0.9rem; line-height: 1.4; color: #666;">
+            Safari: Share > Add to Home Screen<br>
+            Chrome: Menu > Install App
+        </p>
+    </div>
+</div>
+
+<script>
+    const fontList = [
+        { name: 'Inter', family: '"Inter", sans-serif' },
+        { name: 'Playfair Display', family: '"Playfair Display", serif' },
+        { name: 'Montserrat', family: '"Montserrat", sans-serif' },
+        { name: 'Lora', family: '"Lora", serif' },
+        { name: 'Source Code Pro', family: '"Source Code Pro", monospace' },
+        { name: 'Abril Fatface', family: '"Abril Fatface", serif' },
+        { name: 'Bebas Neue', family: '"Bebas Neue", cursive' },
+        { name: 'System Serif', family: 'serif' },
+        { name: 'System Sans', family: 'sans-serif' },
+        { name: 'System Mono', family: 'monospace' },
+        { name: 'Mincho', family: '"Sawarabi Mincho", "MS Mincho", serif' },
+        { name: 'Gothic', family: '"Hiragino Sans", "Meiryo", sans-serif' }
+    ];
+
+    let currentIndex = 0;
+
+    const display = document.getElementById('fontDisplay');
+    const info = document.getElementById('fontInfo');
+    const input = document.getElementById('textInput');
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const toast = document.getElementById('toast');
+
+    function updateFont(index) {
+        currentIndex = (index + fontList.length) % fontList.length;
+        const font = fontList[currentIndex];
+        display.style.fontFamily = font.family;
+        info.textContent = font.name;
+    }
+
+    input.oninput = () => {
+        display.textContent = input.value || "Type something...";
+    };
+
+    nextBtn.onclick = () => updateFont(currentIndex + 1);
+    prevBtn.onclick = () => updateFont(currentIndex - 1);
+
+    info.onclick = () => {
+        navigator.clipboard.writeText(fontList[currentIndex].name).then(() => {
+            toast.textContent = "Font name copied!";
+            toast.style.opacity = '1';
+            setTimeout(() => toast.style.opacity = '0', 1500);
+        });
+    };
+
+    // Modal logic
+    document.getElementById('homeBtn').onclick = () => document.getElementById('modal').style.display = 'flex';
+    document.getElementById('closeModal').onclick = () => document.getElementById('modal').style.display = 'none';
+
+    // Initial load
+    updateFont(0);
+</script>
+
+</body>
+</html>
