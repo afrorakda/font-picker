@@ -8,7 +8,7 @@
     <title>Font Picker - Fridge Combo</title>
     <link rel="apple-touch-icon" href="image_23.png">
     <link rel="icon" type="image/png" href="image_23.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;800&family=Playfair+Display:ital,wght@0,700;1,700&family=Source+Code+Pro:wght@400;700&family=Bebas+Neue&family=Lora:wght@400;700&family=Montserrat:wght@400;900&family=Abril+Fatface&family=Sawarabi+Mincho&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;800&family=Playfair+Display:ital,wght@0,700;1,700&family=Source+Code+Pro:wght@400;700&family=Bebas+Neue&family=Lora:wght@400;700&family=Montserrat:wght@400;900&family=Abril+Fatface&family=Sawarabi+Mincho&family=Roboto:wght@400;700&family=Merriweather:wght@400;700&family=Caveat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #fff;
@@ -29,7 +29,6 @@
             user-select: none;
         }
 
-        /* 入力エリアのみ選択・入力を許可 */
         textarea {
             -webkit-touch-callout: default !important;
             -webkit-user-select: text !important;
@@ -54,24 +53,38 @@
             background: var(--accent); padding: 8px 12px; border-radius: 10px;
         }
 
-        /* Display Area */
+        /* Display Area (全体タップでコピー) */
         .display-card {
             width: 100%; aspect-ratio: 1 / 0.8; background: var(--input-bg);
             border: 2px solid var(--accent); border-radius: var(--radius);
             display: flex; align-items: center; justify-content: center;
-            overflow: hidden; padding: 25px; margin-bottom: 15px; position: relative;
+            overflow: hidden; padding: 25px; margin-bottom: 10px; position: relative;
+            cursor: pointer; transition: transform 0.1s;
         }
-        #fontDisplay { width: 100%; text-align: center; word-break: break-word; font-size: 2.2rem; line-height: 1.2; }
+        .display-card:active { transform: scale(0.98); background: var(--accent); }
+
+        #fontDisplay { 
+            width: 100%; text-align: center; word-break: break-word; 
+            font-size: 2.2rem; line-height: 1.2; 
+        }
+
+        /* Size Controls (カード右下) */
+        .size-controls {
+            position: absolute; bottom: 10px; right: 10px; display: flex; gap: 5px;
+        }
+        .size-btn {
+            width: 32px; height: 32px; background: #fff; border: 1px solid var(--accent);
+            border-radius: 8px; font-weight: 800; color: #999; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
+        }
 
         .info-tag {
-            position: absolute; bottom: 12px; font-size: 0.7rem; font-weight: 800;
-            background: #fff; color: #999; padding: 6px 14px;
-            border-radius: 10px; text-transform: uppercase; cursor: pointer;
-            border: 1px solid var(--accent); transition: 0.1s;
+            position: absolute; bottom: 10px; left: 10px; font-size: 0.65rem; font-weight: 800;
+            background: #fff; color: #bbb; padding: 6px 12px;
+            border-radius: 8px; text-transform: uppercase; border: 1px solid var(--accent);
         }
-        .info-tag:active { transform: scale(0.95); background: var(--accent); }
 
-        /* Controls */
+        /* Main Controls */
         .controls { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; }
         .main-btn {
             background: var(--main); color: #fff; border: none; padding: 18px;
@@ -88,7 +101,7 @@
         .clr-link { font-size: 0.75rem; font-weight: 800; color: #999; cursor: pointer; text-decoration: underline; }
 
         textarea {
-            width: 100%; height: 90px; border-radius: var(--radius);
+            width: 100%; height: 80px; border-radius: var(--radius);
             border: 2px solid var(--accent); background: var(--input-bg);
             padding: 15px; font-size: 16px; color: var(--main);
             resize: none; outline: none; -webkit-appearance: none;
@@ -96,6 +109,7 @@
             transition: border-color 0.2s; font-weight: 500;
         }
         textarea:focus { border-color: var(--main); }
+        textarea::placeholder { color: var(--placeholder); -webkit-text-fill-color: var(--placeholder); }
 
         /* Footer */
         .footer-btns { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px 0 30px; }
@@ -128,9 +142,13 @@
         <a href="https://afrorakda.github.io/" class="hub-link">🏠 Hub</a>
     </header>
 
-    <div class="display-card">
+    <div class="display-card" id="copyArea">
         <div id="fontDisplay">The quick brown fox</div>
         <div class="info-tag" id="fontInfo">Inter</div>
+        <div class="size-controls">
+            <button class="size-btn" id="sizeDown">A-</button>
+            <button class="size-btn" id="sizeUp">A+</button>
+        </div>
     </div>
 
     <div class="controls">
@@ -164,7 +182,7 @@
     <div class="modal-content">
         <span class="close-icon" id="closeModal">&times;</span>
         <h3 style="margin-top:0; font-weight:800">📱 Install</h3>
-        <p style="margin: 15px 0; color: #666; font-size: 0.9rem;">Add to home screen.</p>
+        <p style="margin: 15px 0; color: #666; font-size: 0.9rem;">Add to your home screen.</p>
         <div style="text-align: left; font-size: 0.9rem; line-height: 1.6;">
             <p>🍏 <b>iPhone (Safari):</b><br>Share > Add to Home Screen</p><br>
             <p>🤖 <b>Android (Chrome):</b><br>Menu (⋮) > Add to home screen</p>
@@ -182,20 +200,27 @@
         { name: 'Abril Fatface', family: '"Abril Fatface", serif' },
         { name: 'Bebas Neue', family: '"Bebas Neue", cursive' },
         { name: 'Sawarabi Mincho', family: '"Sawarabi Mincho", serif' },
+        { name: 'Roboto', family: '"Roboto", sans-serif' },
+        { name: 'Merriweather', family: '"Merriweather", serif' },
+        { name: 'Caveat', family: '"Caveat", cursive' },
+        { name: 'Noto Sans JP', family: '"Noto Sans JP", sans-serif' },
         { name: 'System Sans', family: 'sans-serif' },
         { name: 'System Serif', family: 'serif' },
         { name: 'System Mono', family: 'monospace' }
     ];
 
     let currentIndex = 0;
+    let currentSize = 2.2;
     const display = document.getElementById('fontDisplay');
     const info = document.getElementById('fontInfo');
     const input = document.getElementById('textInput');
+    const copyArea = document.getElementById('copyArea');
     const clrAll = document.getElementById('clrAll');
     const nextBtn = document.getElementById('nextBtn');
     const prevBtn = document.getElementById('prevBtn');
+    const sizeUp = document.getElementById('sizeUp');
+    const sizeDown = document.getElementById('sizeDown');
     const toast = document.getElementById('toast');
-    const modal = document.getElementById('modal');
 
     function updateFont(index) {
         currentIndex = (index + fontList.length) % fontList.length;
@@ -204,28 +229,32 @@
         info.textContent = font.name;
     }
 
+    function updateSize(delta) {
+        currentSize = Math.max(0.8, Math.min(5.0, currentSize + delta));
+        display.style.fontSize = `${currentSize}rem`;
+    }
+
     input.oninput = () => { display.textContent = input.value; };
 
     clrAll.onclick = () => {
-        input.value = "";
-        display.textContent = "";
-        input.focus();
+        input.value = ""; display.textContent = ""; input.focus();
     };
 
     nextBtn.onclick = () => updateFont(currentIndex + 1);
     prevBtn.onclick = () => updateFont(currentIndex - 1);
+    sizeUp.onclick = (e) => { e.stopPropagation(); updateSize(0.2); };
+    sizeDown.onclick = (e) => { e.stopPropagation(); updateSize(-0.2); };
 
-    info.onclick = () => {
+    copyArea.onclick = () => {
         navigator.clipboard.writeText(fontList[currentIndex].name).then(() => {
-            toast.textContent = "Font name copied!";
+            toast.textContent = `Font: ${fontList[currentIndex].name} copied!`;
             toast.style.opacity = '1';
-            setTimeout(() => toast.style.opacity = '0', 1500);
+            setTimeout(() => toast.style.opacity = '0', 2000);
         });
     };
 
-    document.getElementById('homeBtn').onclick = () => modal.style.display = 'flex';
-    document.getElementById('closeModal').onclick = () => modal.style.display = 'none';
-    window.onclick = (e) => { if (e.target == modal) modal.style.display = 'none'; };
+    document.getElementById('homeBtn').onclick = () => document.getElementById('modal').style.display = 'flex';
+    document.getElementById('closeModal').onclick = () => document.getElementById('modal').style.display = 'none';
 
     async function loadFooter() {
         try {
@@ -237,7 +266,6 @@
         } catch(e) {}
     }
     window.onload = loadFooter;
-
     updateFont(0);
 </script>
 
