@@ -53,7 +53,6 @@
             background: var(--accent); padding: 8px 12px; border-radius: 10px;
         }
 
-        /* Display Area (全体タップでコピー) */
         .display-card {
             width: 100%; aspect-ratio: 1 / 0.8; background: var(--input-bg);
             border: 2px solid var(--accent); border-radius: var(--radius);
@@ -68,7 +67,12 @@
             font-size: 2.2rem; line-height: 1.2; 
         }
 
-        /* Size Controls (カード右下) */
+        /* Copy Guide Text */
+        .copy-guide {
+            position: absolute; top: 12px; right: 15px; font-size: 0.6rem; font-weight: 800;
+            color: #ccc; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
         .size-controls {
             position: absolute; bottom: 10px; right: 10px; display: flex; gap: 5px;
         }
@@ -84,7 +88,6 @@
             border-radius: 8px; text-transform: uppercase; border: 1px solid var(--accent);
         }
 
-        /* Main Controls */
         .controls { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; }
         .main-btn {
             background: var(--main); color: #fff; border: none; padding: 18px;
@@ -94,7 +97,6 @@
         .btn-prev { background: #777; width: 60px; flex-grow: 0; }
         .main-btn:active { transform: scale(0.98); }
 
-        /* Input Section */
         .input-section { width: 100%; margin-bottom: 25px; position: relative;}
         .input-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 0 5px; }
         .input-label { font-size: 0.7rem; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 0.5px;}
@@ -111,7 +113,6 @@
         textarea:focus { border-color: var(--main); }
         textarea::placeholder { color: var(--placeholder); -webkit-text-fill-color: var(--placeholder); }
 
-        /* Footer */
         .footer-btns { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px 0 30px; }
         .kofi-btn, .home-btn {
             width: 100%; max-width: 250px; padding: 14px; border-radius: var(--radius);
@@ -143,6 +144,7 @@
     </header>
 
     <div class="display-card" id="copyArea">
+        <div class="copy-guide">Tap to copy name</div>
         <div id="fontDisplay">The quick brown fox</div>
         <div class="info-tag" id="fontInfo">Inter</div>
         <div class="size-controls">
